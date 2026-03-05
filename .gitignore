@@ -1,0 +1,17 @@
+# Extensiones de editores y sistemas
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs de error
+npm-debug.log*
+yarn-debug.log*
+
+# Posibles variables de entorno futuras
+.env
+.env.local
+
+# Carpeta de compilación (por si usas herramientas de optimización)
+dist/
+build/

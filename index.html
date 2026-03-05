@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RepairTrack Enterprise | Sistema de Gestión Técnica</title>
+    <!-- Google Fonts: Inter for Enterprise Legibility -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation (Fixed) -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">RT</div>
+                <div class="brand-name">
+                    <h1>RepairTrack</h1>
+                    <p>Enterprise</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li>
+                        <button class="nav-link active" data-view="dashboard">
+                            <span class="nav-icon">📊</span>
+                            <span class="nav-text">Panel Principal</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-link" data-view="new-order">
+                            <span class="nav-icon">➕</span>
+                            <span class="nav-text">Nueva Orden</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-link" data-view="history">
+                            <span class="nav-icon">📋</span>
+                            <span class="nav-text">Historial</span>
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="nav-spacer"></div>
+
+                <ul class="nav-list secondary">
+                    <li>
+                        <button class="nav-link" data-view="settings">
+                            <span class="nav-icon">⚙️</span>
+                            <span class="nav-text">Configuración</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-user">
+                <div class="user-avatar">BL</div>
+                <div class="user-meta">
+                    <span class="user-name">Bruno Leon</span>
+                    <span class="user-role">Senior Tech</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Global Header -->
+            <header class="app-header">
+                <div class="header-left">
+                    <h2 id="view-title">Panel Principal</h2>
+                </div>
+
+                <div class="header-right">
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle" class="theme-switch" aria-label="Cambiar tema">
+                        <span class="sun-icon">☀️</span>
+                        <span class="moon-icon">🌙</span>
+                    </button>
+
+                    <!-- Search Bar -->
+                    <div class="search-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="global-search" placeholder="Buscar orden o cliente...">
+                    </div>
+
+                    <button class="btn btn-primary" id="header-new-btn">
+                        <span>+ Nueva Orden</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dynamic View Container (SPA) -->
+            <div id="view-container" class="view-viewport">
+                <!-- Dashboard View -->
+                <section id="view-dashboard" class="view-item active">
+                    <!-- Stats Dashboard -->
+                    <section id="stats-dashboard" class="stats-dashboard">
+                        <div class="stat-card glass">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-details">
+                                <span class="stat-title">Total</span>
+                                <h3 id="stat-total" class="stat-number">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card glass shadow-pending">
+                            <div class="stat-icon">🕒</div>
+                            <div class="stat-details">
+                                <span class="stat-title">Pendientes</span>
+                                <h3 id="stat-pending" class="stat-number">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card glass shadow-process">
+                            <div class="stat-icon">🛠️</div>
+                            <div class="stat-details">
+                                <span class="stat-title">En Reparación</span>
+                                <h3 id="stat-process" class="stat-number">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card glass shadow-ready">
+                            <div class="stat-icon">✅</div>
+                            <div class="stat-details">
+                                <span class="stat-title">Completadas</span>
+                                <h3 id="stat-ready" class="stat-number">0</h3>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="data-card">
+                        <div class="card-header">
+                            <h3>Órdenes Recientes</h3>
+                            <button class="btn btn-ghost" id="view-all-history">Ver todas</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID Orden</th>
+                                        <th>Cliente</th>
+                                        <th>Equipo</th>
+                                        <th>Estado</th>
+                                        <th>Fecha Ingreso</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboard-table-body">
+                                    <!-- Rows injected by JS -->
+                                </tbody>
+                            </table>
+                            <div id="dashboard-empty" class="empty-placeholder hidden">
+                                <p>No hay órdenes registradas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- New Order View -->
+                <section id="view-new-order" class="view-item">
+                    <div class="form-container">
+                        <form id="main-repair-form" class="enterprise-form">
+                            <header class="form-header">
+                                <h3>Registro de Nueva Orden</h3>
+                                <p>Complete los datos para generar un nuevo ticket de servicio.</p>
+                            </header>
+
+                            <div class="form-sections-grid">
+                                <!-- Section 1: Customer -->
+                                <fieldset class="form-card">
+                                    <legend>1. Información del Cliente</legend>
+                                    <div class="input-group">
+                                        <label for="f-customer">Nombre Completo</label>
+                                        <input type="text" id="f-customer" name="customer" required
+                                            placeholder="Ej: Juan Pérez">
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="f-phone">Teléfono de contacto</label>
+                                        <input type="tel" id="f-phone" name="phone" placeholder="+56 9 ...">
+                                    </div>
+                                </fieldset>
+
+                                <!-- Section 2: Device -->
+                                <fieldset class="form-card">
+                                    <legend>2. Detalles del Equipo</legend>
+                                    <div class="input-group">
+                                        <label for="f-device">Equipo / Modelo</label>
+                                        <input type="text" id="f-device" name="device" required
+                                            placeholder="Ej: iPhone 14 Pro Max">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Evidencia Fotográfica</label>
+                                        <div class="drop-zone">
+                                            <input type="file" id="f-image" accept="image/*" class="file-input">
+                                            <div class="drop-preview" id="form-img-preview">
+                                                <span>📷 Subir fotografía de ingreso</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                                <!-- Section 3: Diagnostic Staging -->
+                                <fieldset class="form-card full-width">
+                                    <legend>3. Análisis Inicial</legend>
+                                    <div class="input-group">
+                                        <label for="f-report">Reporte Inicial (Cliente)</label>
+                                        <textarea id="f-report" name="report" rows="4" required
+                                            placeholder="Falla comentada por el usuario al ingresar el equipo..."></textarea>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <div class="status-box">
+                                            <label>Estado de Ingreso:</label>
+                                            <select id="f-status" name="status">
+                                                <option value="pending">Pendiente</option>
+                                                <option value="process">En Diagnóstico</option>
+                                            </select>
+                                        </div>
+                                        <div class="button-group">
+                                            <button type="button" class="btn btn-secondary"
+                                                id="form-reset-btn">Cancelar</button>
+                                            <button type="submit" class="btn btn-primary">Registrar Ingreso</button>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Management Overlay (Edit/Update) -->
+    <div id="edit-overlay" class="overlay hidden">
+        <div class="overlay-card">
+            <header class="overlay-header">
+                <h3>Gestionar Orden <span id="edit-id-title">#REP-XXXX</span></h3>
+                <button id="close-edit-overlay" class="btn-icon">✕</button>
+            </header>
+            <form id="edit-repair-form" class="overlay-form">
+                <div class="overlay-body">
+                    <div class="management-grid">
+                        <!-- Left: Info Correction -->
+                        <div class="management-col">
+                            <h4 class="sub-legend">Datos del Servicio</h4>
+                            <div class="input-group">
+                                <label>Cliente</label>
+                                <input type="text" id="e-customer" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Equipo / Modelo</label>
+                                <input type="text" id="e-device" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Reporte Original</label>
+                                <textarea id="e-report" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Right: Technical Step -->
+                        <div class="management-col highlighted">
+                            <h4 class="sub-legend">Área Técnica</h4>
+                            <div class="input-group">
+                                <label>Evolución / Diagnóstico Profesional</label>
+                                <textarea id="e-diagnosis" rows="8"
+                                    placeholder="Escriba aquí los avances o el diagnóstico final..."></textarea>
+                            </div>
+                            <div class="input-group">
+                                <label>Actualizar Estado:</label>
+                                <select id="e-status">
+                                    <option value="pending">🔴 Pendiente</option>
+                                    <option value="process">🟡 En Diagnóstico</option>
+                                    <option value="ready">🟢 Listo para Entrega</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="overlay-footer">
+                    <div class="left-actions">
+                        <button type="button" class="btn btn-danger" id="delete-order-btn">🗑️ Eliminar
+                            Registro</button>
+                    </div>
+                    <div class="right-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-edit-btn">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                </footer>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav" id="mobile-nav">
+        <button class="mobile-nav-link active" data-view="dashboard">
+            <span class="nav-icon">📊</span>
+            <span class="nav-text">Panel</span>
+        </button>
+        <button class="mobile-nav-link" data-view="new-order">
+            <span class="nav-icon">➕</span>
+            <span class="nav-text">Nueva</span>
+        </button>
+        <button class="mobile-nav-link" data-view="history">
+            <span class="nav-icon">📋</span>
+            <span class="nav-text">Historial</span>
+        </button>
+        <button class="mobile-nav-link" data-view="settings">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-text">Ajustes</span>
+        </button>
+    </nav>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
